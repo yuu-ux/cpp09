@@ -1,0 +1,71 @@
+#include "BitcoinExchange.h"
+#include <stdexcept>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+BitcoinExchange::BitcoinExchange(const BitcoinRateDatabase& db) : db(db) {}
+BitcoinExchange::~BitcoinExchange() {}
+
+double BitcoinExchange::calc_exchange(const Date& date, double value) {
+    std::map<int, double> data = this->db.getData();
+    double response = 0;
+    std::map<int, double>::const_iterator found = data.find(date.toInt());
+    if (found != data.end()) {
+        response = value * found->second;
+    } else {
+        for (std::map<int, double>::iterator row = data.begin(); row != data.end(); ++row) {
+            double before = row->second;
+            if (row->first < date.toInt())
+                continue;
+            response = value * before;
+            break;
+        }
+    }
+    return response;
+}
+
+void BitcoinExchange::exchange(const char* input) {
+    std::ifstream ifs(input);
+    if (!ifs) {
+        throw std::runtime_error("Error: could not open file.");
+    }
+    std::string line;
+    bool first = true;
+    while (std::getline(ifs, line)) {
+        if (first) {
+            first = false;
+            continue;
+        }
+        std::string::size_type pipe_pos = line.find('|');
+        if (pipe_pos == std::string::npos) {
+            std::cout << std::string("Error: bad input => ").append(line) << '\n';
+            continue;
+        }
+
+        try {
+            Date date(line.substr(0, pipe_pos));
+
+            std::istringstream iss(line.substr(pipe_pos+1));
+            double value = 0;
+            iss >> value;
+            if (value < 0) {
+                std::cout << "Error: not a positive number.\n";
+            }
+
+            if (value > BitcoinExchange::MAX_VALUE) {
+                std::cout << "Error: too large a number\n";
+                continue;
+            }
+
+            if (iss.fail()) {
+                std::cout << std::string("Error: bad input => ").append(line) << '\n';
+                continue;
+            }
+            std::cout << date.toString() << " => " << value << " = " << calc_exchange(date, value) << '\n';
+        } catch (std::runtime_error& e) {
+            std::cout << e.what() << '\n';
+            continue;
+        }
+    }
+}
