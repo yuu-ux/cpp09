@@ -5,6 +5,15 @@
 #include <ostream>
 #include <stdexcept>
 
+namespace ex02 {
+    std::clock_t safeClock() {
+        std::clock_t clock = std::clock();
+        if (clock == static_cast<std::clock_t>(-1))
+            throw std::runtime_error("Failed clock()");
+        return clock;
+    }
+}
+
 bool PmergeMe::validate(int argc, char **argv) {
   for (int i = 1; i < argc; ++i) {
     if (!std::isdigit(argv[i][0])) {
@@ -64,16 +73,17 @@ void PmergeMe::initDeque() {
   }
 }
 
+
 void PmergeMe::execute() {
-  std::clock_t start_vec = std::clock();
+  std::clock_t start_vec = ex02::safeClock();
   initVector();
   executeSortVector();
-  std::clock_t end_vec = std::clock();
+  std::clock_t end_vec = ex02::safeClock();
 
-  std::clock_t start_deque = std::clock();
+  std::clock_t start_deque = ex02::safeClock();
   initDeque();
   executeSortDeque();
-  std::clock_t end_deque = std::clock();
+  std::clock_t end_deque = ex02::safeClock();
 
   printResult();
   printTime("vector", start_vec, end_vec);
