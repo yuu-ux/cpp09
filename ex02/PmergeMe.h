@@ -14,6 +14,11 @@ typedef struct pairs_deque {
   int num; // 親要素
   std::vector<struct pairs_deque> nums; // 親より小さい数の集まり
 } pairs_deque;
+
+struct PairVecLess {
+    bool operator()(const ex02::pairs_vec& a, const ex02::pairs_vec& b) const { return a.num < b.num; }
+};
+
 } // namespace ex02
 
 class PmergeMe {

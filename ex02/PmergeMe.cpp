@@ -1,5 +1,6 @@
 #include "PmergeMe.h"
 #include "../ex00/util.h"
+#include <algorithm>
 #include <cctype>
 #include <iostream>
 #include <ostream>
@@ -73,10 +74,8 @@ std::vector<ex02::pairs_vec> PmergeMe::makePairs(const std::vector<ex02::pairs_v
 
 
 void PmergeMe::insertSorted(std::vector<ex02::pairs_vec>& data, const ex02::pairs_vec& elem) {
-    size_t i = 0;
-    while (i < data.size() && data[i].num < elem.num)
-        ++i;
-    data.insert(data.begin() + i, elem);
+    std::vector<ex02::pairs_vec>::iterator pos = std::lower_bound(data.begin(), data.end(), elem, ex02::PairVecLess());
+    data.insert(pos, elem);
 }
 
 static size_t jacobsthal(size_t n) {
