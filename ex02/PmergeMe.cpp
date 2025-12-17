@@ -46,7 +46,67 @@ void PmergeMe::printResult() const {
   std::cout << result << std::endl;
 }
 
-void PmergeMe::executeSortVector() { return; }
+static std::vector<ex02::pairs_vec> makePairs(const std::vector<ex02::pairs_vec>& input, std::vector<ex02::pairs_vec>& pending) {
+    std::vector<ex02::pairs_vec> result;
+
+    // 奇数の時 i + 1 にしないと、out of range になるため、i + 1 番目の要素がある時のみループを回す
+    for (size_t i = 0; i + 1 < input.size(); i += 2) {
+        ex02::pairs_vec parent;
+        if (input[i].num < input[i + 1].num) {
+            parent.num = input[i + 1].num;
+            parent.nums = input[i + 1].nums;
+            parent.nums.push_back(input[i]);
+        } else {
+            parent.num = input[i].num;
+            parent.nums = input[i].nums;
+            parent.nums.push_back(input[i + 1]);
+        }
+        result.push_back(parent);
+    }
+
+    if (input.size() % 2 != 0) {
+        pending.push_back(input.back());
+    }
+    return result;
+}
+
+static void insertSorted(std::vector<ex02::pairs_vec>& arr, const ex02::pairs_vec& elem) {
+    size_t i = 0;
+    while (i < arr.size() && arr[i].num < elem.num)
+        ++i;
+    arr.insert(arr.begin() + i, elem);
+}
+
+static void mergeInsertionSort(std::vector<ex02::pairs_vec>& input) {
+    if (input.size() <= 1)
+        return ;
+
+    std::vector<ex02::pairs_vec> pending;
+    std::vector<ex02::pairs_vec> paired = makePairs(input, pending);
+
+    mergeInsertionSort(paired);
+
+    std::vector<ex02::pairs_vec> to_insert;
+    for (size_t i = 0; i < paired.size(); ++i) {
+        for (size_t j = 0; j < paired[i].nums.size(); ++j) {
+            to_insert.push_back(paired[i].nums[j]);
+        }
+        paired[i].nums.clear();
+    }
+
+    input = paired;
+    for (size_t i = 0; i < to_insert.size(); ++i) {
+        insertSorted(input, to_insert[i]);
+    }
+
+    for (size_t i = 0; i < pending.size(); ++i) {
+        insertSorted(input, pending[i]);
+    }
+}
+
+void PmergeMe::executeSortVector() {
+    mergeInsertionSort(this->vector);
+}
 
 void PmergeMe::executeSortDeque() { return; }
 
