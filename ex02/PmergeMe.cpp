@@ -79,6 +79,58 @@ void PmergeMe::insertSorted(std::vector<ex02::pairs_vec>& data, const ex02::pair
     data.insert(data.begin() + i, elem);
 }
 
+static size_t jacobsthal(size_t n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    size_t a = 0;
+    size_t b = 1;
+    for (size_t i = 2; i <= n; ++i) {
+        size_t c = b + 2 * a;
+        a = b;
+        b = c;
+    }
+    return b;
+}
+
+static std::vector<size_t> makeJacobsthalOrder(size_t m) {
+    std::vector<size_t> order;
+    if (m == 0) return order;
+    if (m == 1) {
+        order.push_back(0);
+        return order;
+    }
+
+    std::vector<bool> used(m + 1, false);
+
+    order.push_back(1);
+    used[1] = true;
+
+    size_t prev = 1;
+    size_t k = 3;
+
+    while (true) {
+        size_t j = jacobsthal(k);
+        if (j > m) break;
+
+        for (size_t x = j; x > prev; --x) {
+            order.push_back(x);
+            used[x] = true;
+        }
+        prev = j;
+        ++k;
+    }
+
+    for (size_t x = m; x > prev; --x) {
+        if (!used[x])
+            order.push_back(x);
+    }
+
+    for (size_t i = 0; i < order.size(); ++i) {
+        order[i] -= 1;
+    }
+    return order;
+}
+
 void PmergeMe::mergeInsertionSort(std::vector<ex02::pairs_vec>& data) {
     // ベースケース
     if (data.size() <= 1)
@@ -102,8 +154,9 @@ void PmergeMe::mergeInsertionSort(std::vector<ex02::pairs_vec>& data) {
 
     // 再帰後の paired は parent.num の並びがソート済みの状態
     data = paired;
-    for (size_t i = 0; i < to_insert.size(); ++i) {
-        insertSorted(data, to_insert[i]);
+    std::vector<size_t> order = makeJacobsthalOrder(to_insert.size());
+    for (size_t k = 0; k < order.size(); ++k) {
+        insertSorted(data, to_insert[k]);
     }
 
     for (size_t i = 0; i < pending.size(); ++i) {
