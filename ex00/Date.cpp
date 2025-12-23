@@ -7,7 +7,9 @@
 std::string Date::toString() const {
   std::string string_date;
   string_date.assign(util::to_string(this->year))
+      .append("-")
       .append(util::to_string(month))
+      .append("-")
       .append(util::to_string(day));
   return string_date;
 }

@@ -51,6 +51,7 @@ void BitcoinExchange::exchange(const char *input) {
       iss >> value;
       if (value < 0) {
         std::cout << "Error: not a positive number.\n";
+        continue;
       }
 
       if (value > BitcoinExchange::MAX_VALUE) {
