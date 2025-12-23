@@ -6,17 +6,19 @@
 
 namespace ex02 {
 typedef struct pairs_vec {
-  int num; // 親要素
+  int num;                            // 親要素
   std::vector<struct pairs_vec> nums; // 親より小さい数の集まり
 } pairs_vec;
 
 typedef struct pairs_deque {
-  int num; // 親要素
+  int num;                              // 親要素
   std::vector<struct pairs_deque> nums; // 親より小さい数の集まり
 } pairs_deque;
 
 struct PairVecLess {
-    bool operator()(const ex02::pairs_vec& a, const ex02::pairs_vec& b) const { return a.num < b.num; }
+  bool operator()(const ex02::pairs_vec &a, const ex02::pairs_vec &b) const {
+    return a.num < b.num;
+  }
 };
 
 } // namespace ex02
@@ -46,25 +48,34 @@ private:
   void executeSortVector();
   void executeSortDeque();
 
-/**
-  * paires_vec の配列を num をキーとして昇順にソートするための関数
-  * @param data ソート対象
-  */
-  void mergeInsertionSort(std::vector<ex02::pairs_vec>& data);
+  /**
+   * ヤコブスタール数列を用いて、要素を挿入する順序を表す配列を生成
+   * @param array_length 生成するインデックスの個数
+   */
+  std::vector<size_t> makeJacobsthalOrder(size_t array_length);
 
- /**
-  * 入力をペアに分割するための関数
-  * @param data 分割対象
-  * @param pending このレベルでペアにできなかった要素
- */
-  std::vector<ex02::pairs_vec> makePairs(const std::vector<ex02::pairs_vec>& data, std::vector<ex02::pairs_vec>& pending);
+  /**
+   * paires_vec の配列を num をキーとして昇順にソートするための関数
+   * @param data ソート対象
+   */
+  void mergeInsertionSort(std::vector<ex02::pairs_vec> &data);
 
- /**
-  * num を昇順にソート済みの配列に elem を挿入するための関数
-  * @param data インサート対象
-  * @param elem インサートする要素
-  */
-  void insertSorted(std::vector<ex02::pairs_vec>& data, const ex02::pairs_vec& elem);
+  /**
+   * 入力をペアに分割するための関数
+   * @param data 分割対象
+   * @param pending このレベルでペアにできなかった要素
+   */
+  std::vector<ex02::pairs_vec>
+  makePairs(const std::vector<ex02::pairs_vec> &data,
+            std::vector<ex02::pairs_vec> &pending);
+
+  /**
+   * num を昇順にソート済みの配列に elem を挿入するための関数
+   * @param data インサート対象
+   * @param elem インサートする要素
+   */
+  void insertSorted(std::vector<ex02::pairs_vec> &data,
+                    const ex02::pairs_vec &elem);
 
   void printResult() const;
   void printTime(const std::string &container_name, const std::clock_t start,
