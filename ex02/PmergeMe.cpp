@@ -78,54 +78,34 @@ void PmergeMe::insertSorted(std::vector<ex02::pairs_vec>& data, const ex02::pair
     data.insert(pos, elem);
 }
 
-static size_t jacobsthal(size_t n) {
-    if (n == 0) return 0;
-    if (n == 1) return 1;
-    size_t a = 0;
-    size_t b = 1;
-    for (size_t i = 2; i <= n; ++i) {
-        size_t c = b + 2 * a;
-        a = b;
-        b = c;
-    }
-    return b;
-}
-
-static std::vector<size_t> makeJacobsthalOrder(size_t m) {
+static std::vector<size_t> makeJacobsthalOrder(size_t array_length)
+{
     std::vector<size_t> order;
-    if (m == 0) return order;
-    if (m == 1) {
+    if (array_length == 0)
+        return order;
+    if (array_length == 1) {
         order.push_back(0);
         return order;
     }
-
-    std::vector<bool> used(m + 1, false);
-
-    order.push_back(1);
-    used[1] = true;
-
-    size_t prev = 1;
-    size_t k = 3;
-
+    order.push_back(0);
+    // Ji = Ji−1 + 2Ji−2
+    // 初期値が 1 なのは 3 からヤコブスタール数列を作りたいため
+    // 0, 1, 1, 3, 2, 5, 4, 11, 10
+    size_t ji2  = 1;
+    size_t ji1  = 1;
     while (true) {
-        size_t j = jacobsthal(k);
-        if (j > m) break;
-
-        for (size_t x = j; x > prev; --x) {
-            order.push_back(x);
-            used[x] = true;
+        size_t ji = ji1 + 2 * ji2;
+        // m が 8だった場合、11になった時点で breakする
+        if (ji > array_length) break;
+        for (size_t x = ji; x > ji1; --x) {
+            order.push_back(x-1);
         }
-        prev = j;
-        ++k;
+        ji2 = ji1;
+        ji1 = ji;
     }
-
-    for (size_t x = m; x > prev; --x) {
-        if (!used[x])
-            order.push_back(x);
-    }
-
-    for (size_t i = 0; i < order.size(); ++i) {
-        order[i] -= 1;
+    // 3, 2, 5, 4, (11, 10, 9), 8, 7, 6
+    for (size_t x = array_length; x > ji1; --x) {
+        order.push_back(x-1);
     }
     return order;
 }
@@ -154,8 +134,11 @@ void PmergeMe::mergeInsertionSort(std::vector<ex02::pairs_vec>& data) {
     // 再帰後の paired は parent.num の並びがソート済みの状態
     data = paired;
     std::vector<size_t> order = makeJacobsthalOrder(to_insert.size());
-    for (size_t k = 0; k < order.size(); ++k) {
-        insertSorted(data, to_insert[k]);
+
+    for (size_t i = 0; i < order.size(); i++) {
+        ex02::pairs_vec elem = to_insert[order[i]];
+        std::vector<ex02::pairs_vec>::iterator pos = std::lower_bound(data.begin(), data.end(), elem, ex02::PairVecLess());
+        data.insert(pos, elem);
     }
 
     for (size_t i = 0; i < pending.size(); ++i) {
