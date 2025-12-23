@@ -23,7 +23,7 @@ RPN::RPN(const char *argv) : result(0) {
     if (isOperator(token[0])) {
 
       if (stack.size() < RPN::MINIMUM_STACK_SIZE) {
-        throw std::runtime_error("Error");
+        throw std::runtime_error("Error: insufficient operands");
       }
 
       int rvalue = stack.top();
@@ -44,7 +44,7 @@ RPN::RPN(const char *argv) : result(0) {
         break;
       case '/':
         if (rvalue == 0) {
-          throw std::runtime_error("Error");
+          throw std::runtime_error("Error: division by zero");
         }
         result = lvalue / rvalue;
         break;
@@ -59,14 +59,14 @@ RPN::RPN(const char *argv) : result(0) {
     tmp >> value;
 
     if (!isInt(value) || tmp.fail() || value < 0 || value > MAX_VALUE) {
-      throw std::runtime_error("Error");
+      throw std::runtime_error("Error: invalid input");
     }
 
     stack.push(value);
   }
 
   if (stack.size() != 1) {
-    throw std::runtime_error("Error");
+    throw std::runtime_error("Error: invalid RPN expression");
   }
 
   this->result = stack.top();
