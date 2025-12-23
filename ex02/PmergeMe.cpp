@@ -15,17 +15,23 @@ std::clock_t safeClock() {
 }
 } // namespace ex02
 
-bool PmergeMe::validate(int argc, char **argv) {
+void PmergeMe::validate(int argc, char **argv) {
   for (int i = 1; i < argc; ++i) {
-    if (!std::isdigit(argv[i][0])) {
-      return false;
-    }
-    int num = atoi(argv[i]);
-    if (num < 0) {
-      return false;
-    }
+    errno = 0;
+    char *end = NULL;
+    long num = std::strtoul(argv[i], &end, 10);
+
+    if (end == argv[i])
+      throw std::runtime_error("Error: expected a positive integer");
+
+    if (*end != '\0')
+      throw std::runtime_error("Error: invalid number");
+
+    if (errno == ERANGE)
+      throw std::runtime_error("Error: number out of range");
+    if (num < 0)
+        throw std::runtime_error("Error: value must be > 0");
   }
-  return true;
 }
 
 void PmergeMe::printResult() const {
@@ -273,9 +279,7 @@ void PmergeMe::execute() {
 }
 
 PmergeMe::PmergeMe(int argc, char **argv) {
-  if (!validate(argc, argv)) {
-    std::runtime_error("invalid input");
-  }
+  validate(argc, argv);
   this->argc = argc;
   this->argv = argv;
 }

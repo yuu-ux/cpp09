@@ -1,5 +1,6 @@
 #pragma once
 
+#include <errno.h>
 #include <deque>
 #include <string>
 #include <vector>
@@ -48,7 +49,7 @@ private:
   PmergeMe(const PmergeMe &other);
   PmergeMe &operator=(const PmergeMe &rhs);
 
-  bool validate(int argc, char **argv);
+  void validate(int argc, char **argv);
   void initVector();
   void initDeque();
 

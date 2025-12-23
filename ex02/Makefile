@@ -26,4 +26,4 @@ linter:
 
 re: fclean all
 
-.PHONY: all clean re fclean format
+.PHONY: all clean re fclean format linter

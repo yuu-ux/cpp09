@@ -11,7 +11,11 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  PmergeMe pm(argc, argv);
-  pm.execute();
+  try {
+      PmergeMe pm(argc, argv);
+      pm.execute();
+  } catch (std::exception& e) {
+      std::cerr << e.what() << '\n';
+  }
   return EXIT_SUCCESS;
 }
