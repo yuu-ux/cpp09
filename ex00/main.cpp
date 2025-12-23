@@ -13,7 +13,6 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  static_cast<void>(argv);
   BitcoinRateDatabase db;
   BitcoinExchange exchanger(db);
   exchanger.exchange(argv[1]);
