@@ -5,15 +5,15 @@
 #include <vector>
 
 namespace ex02 {
-typedef struct pairs_vec {
+struct pairs_vec {
   int num;                            // 親要素
-  std::vector<struct pairs_vec> nums; // 親より小さい数の集まり
-} pairs_vec;
+  std::vector<pairs_vec> nums; // 親より小さい数の集まり
+};
 
-typedef struct pairs_deque {
+struct pairs_deque {
   int num;                              // 親要素
-  std::vector<struct pairs_deque> nums; // 親より小さい数の集まり
-} pairs_deque;
+  std::deque<pairs_deque> nums; // 親より小さい数の集まり
+};
 
 struct PairVecLess {
   bool operator()(const ex02::pairs_vec &a, const ex02::pairs_vec &b) const {
@@ -58,16 +58,16 @@ private:
    * paires_vec の配列を num をキーとして昇順にソートするための関数
    * @param data ソート対象
    */
-  void mergeInsertionSort(std::vector<ex02::pairs_vec> &data);
+  void mergeInsertionSortVec(std::vector<ex02::pairs_vec> &data);
+  void mergeInsertionSortDeque(std::deque<ex02::pairs_deque> &data);
 
   /**
    * 入力をペアに分割するための関数
    * @param data 分割対象
    * @param pending このレベルでペアにできなかった要素
    */
-  std::vector<ex02::pairs_vec>
-  makePairs(const std::vector<ex02::pairs_vec> &data,
-            std::vector<ex02::pairs_vec> &pending);
+  std::vector<ex02::pairs_vec> makePairsVec(const std::vector<ex02::pairs_vec> &data, std::vector<ex02::pairs_vec> &pending);
+  std::deque<ex02::pairs_deque> makePairsDeque(const std::deque<ex02::pairs_deque> &data, std::deque<ex02::pairs_deque> &pending);
 
   /**
    * num を昇順にソート済みの配列に elem を挿入するための関数
