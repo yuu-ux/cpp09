@@ -3,6 +3,7 @@
 #include <deque>
 #include <string>
 #include <vector>
+#include <ctime>
 
 namespace ex02 {
 struct pairs_vec {
@@ -13,6 +14,12 @@ struct pairs_vec {
 struct pairs_deque {
   int num;                              // 親要素
   std::deque<pairs_deque> nums; // 親より小さい数の集まり
+};
+
+struct PairDequeLess {
+  bool operator()(const ex02::pairs_deque &a, const ex02::pairs_deque &b) const {
+    return a.num < b.num;
+  }
 };
 
 struct PairVecLess {
@@ -74,8 +81,8 @@ private:
    * @param data インサート対象
    * @param elem インサートする要素
    */
-  void insertSorted(std::vector<ex02::pairs_vec> &data,
-                    const ex02::pairs_vec &elem);
+  void insertSortedVec(std::vector<ex02::pairs_vec> &data, const ex02::pairs_vec &elem);
+  void insertSortedDeque(std::deque<ex02::pairs_deque> &data, const ex02::pairs_deque &elem);
 
   void printResult() const;
   void printTime(const std::string &container_name, const std::clock_t start,
