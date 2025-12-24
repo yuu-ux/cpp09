@@ -8,21 +8,14 @@ BitcoinExchange::BitcoinExchange(const BitcoinRateDatabase &db) : db(db) {}
 BitcoinExchange::~BitcoinExchange() {}
 
 double BitcoinExchange::calc_exchange(const Date &date, double value) {
-  Bitcoin data = this->db.getData();
-  double response = 0;
-  Bitcoin::const_iterator found = data.find(date.toInt());
-  if (found != data.end()) {
-    response = value * found->second;
-  } else {
-    for (Bitcoin::iterator row = data.begin(); row != data.end(); ++row) {
-      double before = row->second;
-      if (row->first < date.toInt())
-        continue;
-      response = value * before;
-      break;
-    }
-  }
-  return response;
+  const Bitcoin &data = this->db.getData();
+  Bitcoin::const_iterator found = data.upper_bound(date.toInt());
+
+  if (found == data.begin())
+    throw std::runtime_error("Error: Invalid Date");
+
+  --found;
+  return value * found->second;
 }
 
 void BitcoinExchange::exchange(const char *input) {

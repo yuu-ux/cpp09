@@ -13,8 +13,12 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  BitcoinRateDatabase db;
-  BitcoinExchange exchanger(db);
-  exchanger.exchange(argv[1]);
+  try {
+    BitcoinRateDatabase db;
+    BitcoinExchange exchanger(db);
+    exchanger.exchange(argv[1]);
+  } catch (std::exception &e) {
+    std::cerr << e.what() << '\n';
+  }
   return EXIT_SUCCESS;
 }
