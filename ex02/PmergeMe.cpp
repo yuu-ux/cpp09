@@ -285,3 +285,10 @@ PmergeMe::PmergeMe(int argc, char **argv) {
 }
 
 PmergeMe::~PmergeMe() {}
+
+// void PmergeMe::testSorted() const {
+//     if (std::is_sorted(this->vector.begin(), this->vector.end(), ex02::PairVecLess()) && std::is_sorted(this->deque.begin(), this->deque.end(), ex02::PairDequeLess()))
+//         std::cout << "OK" << '\n';
+//     else
+//         std::cout << "NG" << '\n';
+// }

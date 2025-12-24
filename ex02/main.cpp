@@ -14,6 +14,7 @@ int main(int argc, char **argv) {
   try {
       PmergeMe pm(argc, argv);
       pm.execute();
+      // pm.testSorted();
   } catch (std::exception& e) {
       std::cerr << e.what() << '\n';
   }

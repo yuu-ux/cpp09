@@ -43,6 +43,11 @@ public:
   ~PmergeMe();
 
   void execute();
+  /**
+    * 正しくソートされたか確認するための関数
+    * c++11 の機能を使ってるためコメントアウト
+    */
+  // void testSorted() const;
 
 private:
   PmergeMe();
