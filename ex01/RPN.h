@@ -1,5 +1,6 @@
 #pragma once
 
+#include <limits.h>
 #include <stack>
 class RPN {
 private:

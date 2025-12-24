@@ -26,12 +26,12 @@ RPN::RPN(const char *argv) : result(0) {
         throw std::runtime_error("Error: insufficient operands");
       }
 
-      int rvalue = stack.top();
+      long rvalue = stack.top();
       stack.pop();
-      int lvalue = stack.top();
+      long lvalue = stack.top();
       stack.pop();
 
-      int result = 0;
+      long result = 0;
       switch (token[0]) {
       case '+':
         result = lvalue + rvalue;
@@ -48,9 +48,14 @@ RPN::RPN(const char *argv) : result(0) {
         }
         result = lvalue / rvalue;
         break;
+      default:
+        throw std::runtime_error("Error: unknown op");
       }
 
-      stack.push(result);
+      if (result > static_cast<long>(INT_MAX) ||
+          result < static_cast<long>(INT_MIN))
+        throw std::runtime_error("Error: overflow");
+      stack.push(static_cast<int>(result));
       continue;
     }
 
