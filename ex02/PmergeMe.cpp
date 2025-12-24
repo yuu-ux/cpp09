@@ -29,8 +29,8 @@ void PmergeMe::validate(int argc, char **argv) {
 
     if (errno == ERANGE)
       throw std::runtime_error("Error: number out of range");
-    if (num < 0)
-        throw std::runtime_error("Error: value must be > 0");
+    if (num <= 0)
+        throw std::runtime_error("Error: value must be >= 0");
   }
 }
 
