@@ -1,8 +1,8 @@
 #include "BitcoinExchange.h"
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <stdexcept>
+#include <cstdlib>
 
 BitcoinExchange::BitcoinExchange(const BitcoinRateDatabase &db) : db(db) {}
 BitcoinExchange::~BitcoinExchange() {}
@@ -39,9 +39,17 @@ void BitcoinExchange::exchange(const char *input) {
     try {
       Date date(line.substr(0, pipe_pos));
 
-      std::istringstream iss(line.substr(pipe_pos + 1));
-      double value = 0;
-      iss >> value;
+      errno = 0;
+      std::string value_str = line.substr(pipe_pos + 1);
+      char *end = NULL;
+      const long value = strtoul(value_str.c_str(), &end, 10);
+
+      // 1文字も読めてないため、数値じゃない
+        if (end == value_str.c_str() || *end != '\0' || errno == ERANGE) {
+            std::cout << "Error: bad input => " << value_str << '\n';
+            continue;
+        }
+
       if (value < 0) {
         std::cout << "Error: not a positive number.\n";
         continue;
@@ -52,10 +60,6 @@ void BitcoinExchange::exchange(const char *input) {
         continue;
       }
 
-      if (iss.fail()) {
-        std::cout << std::string("Error: bad input => ").append(line) << '\n';
-        continue;
-      }
       std::cout << date.toString() << " => " << value << " = "
                 << calc_exchange(date, value) << '\n';
     } catch (std::runtime_error &e) {
