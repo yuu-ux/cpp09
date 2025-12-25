@@ -3,6 +3,9 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <time.h>
+#include <ctime>
+#include <cstring>
 
 std::string Date::toString() const {
   std::string string_date;
@@ -57,10 +60,22 @@ int Date::parseIntChunk(const std::string &date_str) {
   return value;
 }
 
+static bool preValidate(const std::string& date) {
+    std::tm tm;
+    std::memset(&tm, 0, sizeof(tm));
+    tm.tm_isdst = -1;
+
+    const char* end = strptime(date.c_str(), "%Y-%m-%d", &tm);
+    if (!end) return false;
+    return true;
+}
+
 Date::Date(const std::string &date) {
   std::string::size_type pos = 0;
   std::string::size_type next;
 
+  if (!preValidate(date))
+    throw std::runtime_error(std::string("Error: bad format => ").append(date));
   std::string year_str = extractChunk(date, pos, next);
   if (year_str.size() > YEAR_DIGITS) {
     throw(std::runtime_error(
